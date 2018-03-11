@@ -1,0 +1,24 @@
+{
+  "name": "vue-components",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TroyXL/vue-components.git"
+  },
+  "keywords": [
+    "vue",
+    "components",
+    "library"
+  ],
+  "author": "Troy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TroyXL/vue-components/issues"
+  },
+  "homepage": "https://github.com/TroyXL/vue-components#readme"
+}
