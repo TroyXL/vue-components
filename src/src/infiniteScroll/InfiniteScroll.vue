@@ -1,9 +1,11 @@
 <template>
 <div ref="$scroll" class="t-scroll" @scroll.passive="onScroll">
   <div class="t-scroll-padding-top" :style="{height: scrollData.paddingTop + 'px'}"></div>
-  <div class="t-scroll-cell" ref="$cell"
-    v-for="(item, key) in scrollData.displayCells" :key="key"
-    :style="item">{{item.text}}</div>
+    
+    <div ref="$cell" v-for="item in scrollData.displayCells">
+      <slot name="cell" :cell="item"></slot>
+    </div>
+
   <div class="t-scroll-padding-bottom" :style="{height: scrollData.paddingBottom + 'px'}"></div>
 </div>
 </template>
@@ -12,9 +14,8 @@
 import ScrollManager from './ScrollManager'
 
 let manager
-let inInterval = false
-let interval
 let lastScrollTop = 0
+let heightFixed = true
 
 export default {
   name: 'InfiniteScroll',
@@ -28,7 +29,7 @@ export default {
       type: Number,
       default: 3
     },
-    // cell高度值 如果为0则为动态高度 不为0则为固定高度
+    // cell高度值 如果为0或不传则为动态高度 不为0则为固定高度
     cellHeight: {
       type: Number,
       default: 0
@@ -64,6 +65,9 @@ export default {
       // 更新完成后矫正滚动条位置
       this.$nextTick(() => {
         this.$refs.$scroll.scrollTop = lastScrollTop
+        if (!heightFixed) manager.updateCellHeight(
+          this.$refs.$cell.map(item => item.getBoundingClientRect().height)
+        )
       })
     },
 
@@ -77,7 +81,13 @@ export default {
 
 
   },
+  watch: {
+    list () {
+      manager.updateList(this.list)
+    }
+  },
   mounted () {
+    if (!this.cellHeight) heightFixed = false
     this.initScrollManager()
     this.updateScrollRender()
   }

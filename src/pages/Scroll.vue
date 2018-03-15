@@ -1,5 +1,8 @@
 <template>
-<InfiniteScroll :list="cells" :cellHeight="100" />
+<InfiniteScroll :list="cells">
+  <div slot="cell" slot-scope="props"
+  :style="props.cell.style">{{props.cell.text}}</div>
+</InfiniteScroll>
 </template>
 
 <script>
@@ -10,11 +13,15 @@ export default {
   components: { InfiniteScroll },
   computed: {
     cells () {
-      return new Array(1000).fill(1).map((item, index) => {
+      return new Array(100).fill(1).map((item, index) => {
         return {
-          // height: Math.floor(Math.random() * 100 + 100) + 'px',
-          height: '100px',
-          background: this.getRandomColor(),
+          style: {
+            height: Math.floor(Math.random() * 100 + 100) + 'px',
+            // height: '100px',
+            color: '#ffffff',
+            fontSize: '30px',
+            background: this.getRandomColor()
+          },
           text: '#' + (index + 1)
         }
       })
