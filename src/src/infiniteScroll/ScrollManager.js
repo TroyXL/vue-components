@@ -46,15 +46,24 @@ export default class ScrollManager {
 
   // 滚动时更新数据
   updateScroll (scrollTop) {
-    this.passedCells = Math.floor(scrollTop / this.cellHeight)
-
-    this.passedCells = this.passedCells > this.cellCacheNumber ? this.passedCells - this.cellCacheNumber : 0
-    this.displayCells = this.list.slice(this.passedCells, this.renderNumber + this.cellCacheNumber * 2 + this.passedCells)
-    
     if (this.heightFixed) {
+      this.passedCells = Math.floor(scrollTop / this.cellHeight)
+
+      this._adjustCells()
+      
       this.currentCellsTotalHeight = this.displayCells.length * this.cellHeight
       this.paddingTop = this.passedCells * this.cellHeight 
     } else {
+      let passedCellsHeight = 0
+      for (let i = 0; i < this.heightCache.length; i++) {
+        
+        if (scrollTop >= passedCellsHeight) this.passedCells = i
+        else break
+        passedCellsHeight += this.heightCache[i]
+      }
+      
+      this._adjustCells()
+
       this.paddingTop = this.heightCache.reduce((sum, height, index) => {
         if (index < this.passedCells) return sum + height
         return sum
@@ -63,9 +72,14 @@ export default class ScrollManager {
     this.paddingBottom = this.scrollHeight - this.paddingTop - this.currentCellsTotalHeight
   }
 
+  _adjustCells () {
+    this.passedCells = this.passedCells > this.cellCacheNumber ? this.passedCells - this.cellCacheNumber : 0
+    this.displayCells = this.list.slice(this.passedCells, this.renderNumber + this.cellCacheNumber * 2 + this.passedCells)
+  }
+
   // 动态高度时根据已缓存的cell高度计算平均高度
   updateCellHeight (cellsHeightInfo) {
-    console.log(cellsHeightInfo)
+    // console.log(cellsHeightInfo)
     if (this.heightFixed) return
 
     // 更新平均cell高度
@@ -79,7 +93,7 @@ export default class ScrollManager {
       if (height) return sum + height
       return sum + this.cellHeight
     }, 0)
-    console.log(this.heightCache.length, this.passedCells, cellsHeightInfo.length)
+    // console.log(this.heightCache.length, this.passedCells, cellsHeightInfo.length)
   }
 
   // 列表数据有更新

@@ -13,7 +13,7 @@ export default {
   components: { InfiniteScroll },
   computed: {
     cells () {
-      return new Array(100).fill(1).map((item, index) => {
+      return new Array(1000).fill(1).map((item, index) => {
         return {
           style: {
             height: Math.floor(Math.random() * 100 + 100) + 'px',
