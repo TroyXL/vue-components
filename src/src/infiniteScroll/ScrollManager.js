@@ -1,9 +1,9 @@
 export default class ScrollManager {
   constructor ( {
-    list,
-    scrollViewHeight,
-    cellHeight,
-    cellCacheNumber,
+    list, // 待渲染的列表数据 Array
+    scrollViewHeight, // 滚动视图的高度，即滚动区域可见部分的高度
+    cellHeight, // 每个 item 的高度
+    cellCacheNumber, // 上下两方缓冲的item数量
     firstRenderNumber // 动态高度时单屏初次渲染的列表数量
   } ) {
     // 滚动可视区域与滚动列表高度
@@ -32,8 +32,9 @@ export default class ScrollManager {
     this.initScroll()
   }
 
+  // 初始化滚动列表
+  // 计算首屏需要渲染的items和缓冲items
   initScroll () {
-    console.log(this.heightCache)
     if (this.heightFixed) { // cell高度固定时，校正滑动区域总高度，计算单屏渲染的cell数量及底部支撑高度
       this.scrollHeight = this.list.length * this.cellHeight
       this.renderNumber = Math.ceil(this.scrollViewHeight / this.cellHeight)
@@ -45,6 +46,9 @@ export default class ScrollManager {
   }
 
   // 滚动时更新数据
+  // 根据滚动条高度计算已经划出屏幕并且不再需要渲染的items
+  // 更新需要渲染的items和缓冲items
+  // 并更新列表上方和下方需要支撑起的高度
   updateScroll (scrollTop) {
     if (this.heightFixed) {
       this.passedCells = Math.floor(scrollTop / this.cellHeight)
@@ -59,7 +63,7 @@ export default class ScrollManager {
         
         if (scrollTop >= passedCellsHeight) this.passedCells = i
         else break
-        passedCellsHeight += this.heightCache[i]
+        passedCellsHeight += this.heightCache[i] ? this.heightCache[i] : this.cellHeight
       }
       
       this._adjustCells()
@@ -70,16 +74,21 @@ export default class ScrollManager {
       }, 0)
     }
     this.paddingBottom = this.scrollHeight - this.paddingTop - this.currentCellsTotalHeight
+    if (this.paddingBottom < 0) this.paddingBottom = 0
   }
 
+  // 内部调用的调整items相关数据的方法
+  // 包括已经不需要渲染的items和需要渲染的items
   _adjustCells () {
     this.passedCells = this.passedCells > this.cellCacheNumber ? this.passedCells - this.cellCacheNumber : 0
     this.displayCells = this.list.slice(this.passedCells, this.renderNumber + this.cellCacheNumber * 2 + this.passedCells)
   }
 
-  // 动态高度时根据已缓存的cell高度计算平均高度
+  // 动态高度时根据已缓存的cell高度计算平均高度，方法接受当前渲染的cells的高度数组
+  // 对已经渲染过的cell高度进行缓存，保证上方的支撑高度计算准确
+  // 对未渲染过的cell高度进行预估，保证下方的支撑高度尽量靠近实际高度
+  // 调整整个滑动列表的总高度
   updateCellHeight (cellsHeightInfo) {
-    // console.log(cellsHeightInfo)
     if (this.heightFixed) return
 
     // 更新平均cell高度
@@ -93,15 +102,18 @@ export default class ScrollManager {
       if (height) return sum + height
       return sum + this.cellHeight
     }, 0)
-    // console.log(this.heightCache.length, this.passedCells, cellsHeightInfo.length)
   }
 
   // 列表数据有更新
+  // 暂未完成
+  // 如果是固定高度列表则根据新的列表计算相关的信息（总高度、支撑高度、滚动条当前位置需要渲染的数据等）
+  // 如果是非固定高度则重新预估总高度等信息
+  // 即重复上面已有的步骤
   updateList (newList) {
-    this.list = newList
+    // this.list = newList
   }
 
-  // 获取待渲染的列表及相关数据
+  // 获取待渲染的items及相关数据
   getRenderInfo () {
     return {
       scrollHeight: this.scrollHeight,

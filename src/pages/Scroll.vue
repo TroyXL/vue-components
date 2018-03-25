@@ -1,5 +1,5 @@
 <template>
-<InfiniteScroll :list="cells">
+<InfiniteScroll :list="cells" :scrollViewHeight="736">
   <div slot="cell" slot-scope="props"
   :style="props.cell.style">{{props.cell.text}}</div>
 </InfiniteScroll>

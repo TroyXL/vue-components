@@ -1,5 +1,8 @@
 <template>
-<div ref="$scroll" class="t-scroll" @scroll.passive="onScroll">
+<div class="t-scroll"
+     ref="$scroll"
+     :style="{ height: this.scrollViewHeight + 'px' }"
+     @scroll.passive="onScroll">
   <div class="t-scroll-padding-top" :style="{height: scrollData.paddingTop + 'px'}"></div>
     
     <div ref="$cell" v-for="item in scrollData.displayCells">
@@ -20,6 +23,11 @@ let heightFixed = true
 export default {
   name: 'InfiniteScroll',
   props: {
+    scrollViewHeight: {
+      type: Number,
+      required: true
+    },
+
     list: {
       type: Array,
       required: true
@@ -52,7 +60,7 @@ export default {
     initScrollManager () {
       manager = new ScrollManager({
         list: this.list,
-        scrollViewHeight: this.$refs.$scroll.offsetHeight,
+        scrollViewHeight: this.scrollViewHeight,
         cellHeight: this.cellHeight,
         cellCacheNumber: this.cellCacheNumber,
         firstRenderNumber: 10
@@ -73,7 +81,6 @@ export default {
 
 
     onScroll () {
-      // console.log(this.$refs.$cell[0].getBoundingClientRect())
       lastScrollTop = this.$refs.$scroll.scrollTop
       manager.updateScroll(lastScrollTop)
       this.updateScrollRender()
@@ -97,8 +104,6 @@ export default {
 <style scoped>
 .t-scroll  {
   position: relative;
-  width: 100vw;
-  height: 100vh;
   background: #eeeeee;
   overflow: scroll;
 }
