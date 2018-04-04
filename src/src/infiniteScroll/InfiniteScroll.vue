@@ -104,12 +104,6 @@ export default {
 <style scoped>
 .t-scroll  {
   position: relative;
-  background: #eeeeee;
   overflow: scroll;
-}
-.t-scroll-cell {
-  color: #ffffff;
-  font-size: 30px;
-  font-weight: bolder;
 }
 </style>
