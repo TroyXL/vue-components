@@ -18,7 +18,10 @@ const Parsers = {
     this.isHeader = content.isHeader
     this.renderHeader()
     this.renderBolder()
-    // this.renderItalic()
+    this.renderItalic()
+    this.renderThroughLine()
+    this.renderUnderLine()
+    
     return {
       text: content.text,
       rendered: this.rendered,
@@ -35,37 +38,39 @@ const Parsers = {
     if (this.rendered === origin) this.isHeader = false
   },
 
-  // 加粗
+  // 加粗 *
   renderBolder () {
     if (this.isHeader) return // 如果当前为标题，则不再对里面的内容进行解析
 
-    while (this._warkWithReg(/[\*]{2}(.{1,})[\*]{2}?/)) {
-      this.rendered = this.rendered.replace(/[\*]{2}(.{1,})[\*]{2}?/,
-                                            (matched, content) => `<span class="t-md-style-bolder">${content}</span>`)
+    // while (this._warkWithReg(/[\*]{2}(.{1,})[\*]{2}?/)) {
+      this.rendered = this.rendered.replace(/[\*]{1}([^*]{1,})[\*]{1}/g,
+                                            (matched, content) => `<strong>${content}</strong>`)
       console.log('---', this.rendered)
-    }
+    // }
   },
 
-  // 斜体
+  // 斜体 /
   renderItalic () {
     console.log(this.rendered)
-    this.rendered = this.rendered.replace(/[\*]{1}([^*]{1,})[\*]{1}/g,
-                                          (matched, content) => `<span class="t-md-style-italic">${content}</span>`)
+    this.rendered = this.rendered.replace(/[/]{1}([^/]{1,})[/]{1}/g,
+                                          (matched, content) => `<em>${content}</em>`)
   },
 
+  // 删除 -
+  renderThroughLine () {
+    console.log(this.rendered)
+    this.rendered = this.rendered.replace(/[-]{1}([^-]{1,})[-]{1}/g,
+                                          (matched, content) => `<del>${content}</del>`)
+  },
 
-
-  _warkWithReg (reg) {
-    console.log(this.rendered, reg.exec(this.rendered))
-    return reg.exec(this.rendered) !== null
+  // 下划线 _
+  renderUnderLine () {
+    console.log(this.rendered)
+    this.rendered = this.rendered.replace(/[_]{1}([^_]{1,})[_]{1}/g,
+                                          (matched, content) => `<u>${content}</u>`)
   }
 
+  // 无序列表
 
-
-
-
-
-
-
-
+  // 有序列表
 }

@@ -11,6 +11,7 @@
 
 <script>
 import mdRender from './MdManager'
+import { markdown } from 'markdown'
 
 export default {
   name: 'EasyMd',
@@ -32,15 +33,16 @@ export default {
   },
   methods: {
     parseMd () {
+      // this.renderedContent = markdown.toHTML(this.content)
       this.renderedContent = mdRender(this.content)
     }
   },
   watch: {
     defaultContent () {
       this.content = this.defaultContent
+      this.parseMd()
     },
     content () {
-      this.parseMd()
       this.$emit('on-change', this.content)
     }
   },
