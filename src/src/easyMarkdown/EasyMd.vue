@@ -11,10 +11,7 @@
 
 <script>
 import mdRender from './MdManager'
-import showdown from 'showdown'
-import { markdown } from 'markdown'
-
-const md = new showdown.Converter()
+import marked from 'marked'
 
 export default {
   name: 'EasyMd',
@@ -36,9 +33,7 @@ export default {
   },
   methods: {
     parseMd () {
-      // this.renderedContent = md.makeHtml(this.content)
-      this.renderedContent = markdown.toHTML(this.content)
-      // this.renderedContent = mdRender(this.content)
+      this.renderedContent = marked(this.content.replace(/\n/g, '\n\n'))
     }
   },
   watch: {
